@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/self_style.css">
+	<title>物流查询</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row head">
+			<h1>秦 远 海 运</h1>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<label>快件追踪</label>
+				<textarea class="form-control" rows="3" id="logistics_id"></textarea>
+				<button type="button" class="btn btn-danger btn-block" id="sub" onclick="sub()"> 货 件 追 踪 </button>
+			</div>
+		</div>
+		<div class="row table-content">
+			<div id="content">
+				<div class="col-xs-12">
+					
+				</div>
+			</div>
+			<div class="col-xs-12">
+				<table class="table table-bordered">
+				<tbody id='tab'>
+					
+				</tbody>
+			</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js" id="test"></script>
+<script type="text/javascript">
+
+var json_example = '{"ReturnValue":"100","Response_Info":{"trackingNbr":"CL123456","Number":"CL123456","pickupDate":"","From":"","Destination":"中国","Receiver":"","RPhone":"","irid":"107129","totalPieces":"1","totalWeigt":"2.500","status":"3","deliveryDate":"2014.11.04 16:44","signature":"本人收"},"trackingEventList":[{"date":"2014-10-15 04:21","place":"","details":"货件进入操作中心"},{"date":"2014-10-15 14:40","place":"","details":"货件离开操作中心"},{"date":"2014-10-16","place":"奥克兰","details":"货物离开奥克兰，发往中国　"},{"date":"2014-10-17","place":"中国　","details":"货物到达中国，等待海关清关　"},{"date":"2014-10-18 15:20","place":"中国香港 SMC","details":"收寄"},{"date":"2014-10-18 15:22","place":"中国香港 HK OPS","details":"离开处理中心,发往中国 CNSHAE"},{"date":"2014-10-21 14:31","place":"上海市","details":"到达处理中心,来自HK OPS"},{"date":"2014-10-21 16:11","place":"上海市","details":"送交海关"},{"date":"2014-10-30 23:29","place":"上海市","details":"到达处理中心,来自海关待验"},{"date":"2014-10-31 00:48","place":"上海市","details":"海关放行"},{"date":"2014-10-31 04:06","place":"上海市","details":"海关放行"},{"date":"2014-10-31 05:18","place":"上海市","details":"离开处理中心,发往云莲(本部）"},{"date":"2014-10-31 18:49","place":"云莲(本部）","details":"到达处理中心,来自上海市"},{"date":"2014-11-03 23:11","place":"上海市","details":"到达处理中心,来自海关待验"},{"date":"2014-11-04 01:13","place":"上海市","details":"海关放行"},{"date":"2014-11-04 14:51","place":"云莲(本部）","details":"安排投递"},{"date":"2014-11-04 16:44","place":"云莲(本部）","details":"投递并签收。本人收"}],"Extra_Header":""}';
+
+var tmp = $.parseJSON(json_example);
+
+function sub(){
+	appendItem(tmp);
+}
+
+
+//在ajax的回调函数中调用这个方法，将请求回来的json数据传给这个方法就可以了
+function appendItem(data){
+	var item = '<div class="col-xs-12">' +
+				'<p>运 单 号：' + data.Response_Info.Number + '</p>' +
+				'<p>目 的 地：' + data.Response_Info.Destination + ' </p>' +
+				'<p>件 数：' + data.Response_Info.totalPieces + ' </p>' +
+				'<p>送达时间：' + data.Response_Info.deliveryDate + '</p>' +
+				'<p>签 收 人：' + data.Response_Info.signature + '</p>' +
+			'</div>';
+	var tab = '<tr>' +
+					'<td>日期时间</td>' +
+					'<td>服务地点</td>' +
+					'<td>详细内容</td>' +
+				'</tr>';
+	$.each(data.trackingEventList,function(){
+		tab += '<tr>' +
+					'<td>' + this.date + '</td>' +
+					'<td>' + this.details + '</td>' +
+					'<td>' + this.place + '</td>' +
+				'</tr>';
+	})
+	$('#content').html('');
+	$('#content').html(item);
+	$('#tab').html('');
+	$('#tab').html(tab);
+}
+</script>

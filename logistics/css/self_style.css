@@ -1,0 +1,21 @@
+
+body{
+	background: #E5E5E5;
+}
+.btn{
+	margin-top: 2rem;
+	background: #CB0029;
+}
+.table-content{
+	margin-top: 2rem;
+}
+.table{
+	background: white;
+}
+.head{
+	height: 8rem;
+	background: #CB0029;
+	margin-bottom: 3rem;
+	color: white;
+	text-align: center;
+}
