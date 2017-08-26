@@ -13,11 +13,15 @@ class austgoAPI
 {
 
     // region -- attribute
+<<<<<<< HEAD
     /**
      * 接口ID
      */
     const APP_ID = '2017082309300576585';
 
+=======
+    
+>>>>>>> joe
     /**
      * 接口密码
      */
@@ -27,6 +31,14 @@ class austgoAPI
      * 接口基础url
      */
     const BASE_API_URL = 'http://test.austgo.com';
+<<<<<<< HEAD
+=======
+	
+    /**
+     * 接口ID
+     */
+    const APP_ID = '2017082309300576585';
+>>>>>>> joe
 
     // endregion
 
@@ -43,6 +55,7 @@ class austgoAPI
     const WARE_HOUSE = '/api/open/warehouse';
 
     /**
+<<<<<<< HEAD
      * 商品详情
      */
     const GOODS = '/api/open/goods';
@@ -51,6 +64,16 @@ class austgoAPI
      * 批量查询SKU状态
      */
     const SKU_STATUS = '/api/open/sku/status';
+=======
+     * 批量查询SKU状态
+     */
+    const SKU_STATUS = '/api/open/sku/status';
+
+    /**
+     * 商品详情
+     */
+    const GOODS = '/api/open/goods';
+>>>>>>> joe
 
     /**
      * 查询SKU信息

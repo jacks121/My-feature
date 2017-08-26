@@ -1,0 +1,43 @@
+order_id` int(3) DEFAULT '255' COMMENT '显示顺序',
+  `barcode` varchar(400) DEFAULT NULL COMMENT '商品条形码',
+  `goods_name` varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',----------- goods_scan name
+  `des` text COMMENT '简要说明',
+  `description` text COMMENT '商品描述',
+  `pc_description` longtext COMMENT 'PC站说明',
+  `category_id` varchar(255) NOT NULL DEFAULT '' COMMENT '分类ID',----------- 本网站 生活 -> 鞋子
+  `brand_id` int(10) NOT NULL COMMENT '品牌ID',------------ goods_scan UGG
+  `suitable_people` varchar(255) NOT NULL DEFAULT '' COMMENT '适合人群',
+  `country_id` tinyint(4) NOT NULL DEFAULT '1' COMMENT '国别',------------澳洲
+  `spec_qty` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '开启规格功能  1是',
+  `spec_name_1` varchar(60) NOT NULL DEFAULT '' COMMENT '规格1名称',
+  `spec_name_2` varchar(60) NOT NULL DEFAULT '' COMMENT '规格2名称', 
+  `if_show` enum('0','1') NOT NULL DEFAULT '1' COMMENT '是否上架 1是',-------------- goods_scan type
+  `if_freeexpress` enum('0','1') DEFAULT '0' COMMENT '是否包邮',
+  `add_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `last_update` int(10) unsigned NOT NULL DEFAULT '0',
+  `goods_stock` int(11) DEFAULT '0' COMMENT '商品总库存',
+  `limit_num` int(6) DEFAULT '0' COMMENT '每个会员ID限制购买商品数 0表示不限制',
+  `gift_point` int(7) DEFAULT '-1' COMMENT '赠送消费积分数，-1表示按商品价格赠送',
+  `stint_point` int(7) DEFAULT '-1' COMMENT '购买该商品最多可使用积分数,-1表示不限制',
+  `default_spec` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '默认规格ID',
+  `pro_image` int(11) NOT NULL DEFAULT '0' COMMENT '产品图片',--------- image 需要http://cdn2u.com拼接
+  `default_image` int(11) NOT NULL COMMENT '封面',
+  `good_images` varchar(300) DEFAULT NULL COMMENT '产品相册', goods images
+  `pick_type` enum('2','1') DEFAULT NULL COMMENT '推荐方式：1热门  2热销',
+  `depot` tinyint(4) DEFAULT '1' COMMENT '仓库,1国外，2国内，3奶粉',---------- 仓库 1
+  `tags` varchar(102) NOT NULL COMMENT '标签',
+  `pv` int(10) DEFAULT '0' COMMENT '浏览量',
+  `sales` int(10) DEFAULT '0' COMMENT '销量',
+  `freeze_num` int(10) DEFAULT '0' COMMENT '被冻结库存量',
+  `complex_point` int(10) DEFAULT '0' COMMENT '商品综合得分',
+  `delivery_point` int(10) DEFAULT '0' COMMENT '物流速度总得分',
+  `comment_num` int(10) DEFAULT '0' COMMENT '评论总数',
+  `if_ba` enum('0','1') DEFAULT '1' COMMENT '该商品是否加入推广分成 1是',
+  `cash_rate` float(7,4) DEFAULT '0.0000' COMMENT '单品分成比例',
+  `start_time` int(10) NOT NULL DEFAULT '0' COMMENT '促销开始时间',
+  `end_time` int(10) NOT NULL DEFAULT '0' COMMENT '促销结束时间',
+  `prom_rule` tinyint(1) NOT NULL DEFAULT '0' COMMENT '折扣活动规则',
+  `prom_m` int(5) NOT NULL DEFAULT '0' COMMENT '折扣活动M值',
+  `prom_n` decimal(15,2) NOT NULL DEFAULT '0.00' COMMENT '折扣活动N值，金额',
+  `member_level` varchar(100) DEFAULT NULL COMMENT '可购商品会员等级',
+  `promotion_id` int(11) NOT NULL DEFAULT '0' COMMENT '推广活动id',
