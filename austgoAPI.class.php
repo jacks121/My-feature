@@ -13,7 +13,7 @@ class austgoAPI extends wareHouseAPI
 {
 
     // region -- Base
-	//hahaha2
+	//hahaha1
     /**
      * 创建接口需要的json数据
      * @param $data
