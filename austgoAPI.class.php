@@ -13,7 +13,7 @@ class austgoAPI extends wareHouseAPI
 {
 
     // region -- Base
-	//hahaha1
+	//hahaha323432432
     /**
      * 创建接口需要的json数据
      * @param $data
@@ -29,7 +29,6 @@ class austgoAPI extends wareHouseAPI
             'request' => $data,
             'sign' => $sign
         ];
-
         $json = json_encode($json);
         return $json;
     }
