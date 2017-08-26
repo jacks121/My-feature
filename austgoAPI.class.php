@@ -1,82 +1,18 @@
 <?php
 
 /**
- *+------------------------------------------------------------+
- * 澳购接口封装
- *+------------------------------------------------------------+
+ * +------------------------------------------------------------+
+ * 澳购接口文件
+ * +------------------------------------------------------------+
  * Created by PhpStorm.
  * User: joe
  * Date: 2017/8/23
  * Time: 上午9:35
  */
-class austgoAPI
+class austgoAPI extends wareHouseAPI
 {
 
-    // region -- attribute
-    
-    /**
-     * 接口密码
-     */
-    const APP_TOKEN = '55C9470468044900873E65F046E3C5AC';
-
-    /**
-     * 接口基础url
-     */
-    const BASE_API_URL = 'http://test.austgo.com';
-	
-    /**
-     * 接口ID
-     */
-    const APP_ID = '2017082309300576585';
-
-    // endregion
-
-    // region -- 各个接口的url
-
-    /**
-     * 扫描商品
-     */
-    const GOODS_SCAN = '/api/open/goods/scan';
-
-    /**
-     * 仓库列表
-     */
-    const WARE_HOUSE = '/api/open/warehouse';
-
-    /**
-     * 批量查询SKU状态
-     */
-    const SKU_STATUS = '/api/open/sku/status';
-
-    /**
-     * 商品详情
-     */
-    const GOODS = '/api/open/goods';
-
-    /**
-     * 查询SKU信息
-     */
-    const SKU = '/api/open/sku';
-    // endregion
-
     // region -- Base
-
-    /**
-     * 接口url映射
-     * @param $api
-     * @return mixed
-     */
-    private function apiMap($api)
-    {
-        $map = [
-            'goods_scan' => self::GOODS_SCAN,
-            'warehouse' => self::WARE_HOUSE,
-            'goods' => self::GOODS,
-            'sku' => self::SKU,
-            'sku_status' => self::SKU_STATUS,
-        ];
-        return $map[$api];
-    }
 
     /**
      * 创建接口需要的json数据
@@ -86,11 +22,12 @@ class austgoAPI
     public function createJson($data = '')
     {
         $seq = $this->createSeq();
+        $sign = $this->createSign($seq, $data);
         $json = [
-            'appId' => self::APP_ID,
+            'appId' => $this->id,
             'seq' => $seq,
             'request' => $data,
-            'sign' => $this->createSign($seq, $data)
+            'sign' => $sign
         ];
         $json = json_encode($json);
         return $json;
@@ -103,17 +40,9 @@ class austgoAPI
      */
     public function createSign($seq, $data)
     {
-        $tmp = '';
-        foreach ($data as $item) {
-            if (is_bool($item)) {
-                $tmp .= $item ? 'True' : 'False';
-            } elseif (is_array($item)) {
-                $tmp .= implode('',$item);
-            } else {
-                $tmp .= $item;
-            }
-        }
-        return strtoupper(md5($seq . $tmp . self::APP_TOKEN));
+        ksort($data);
+        $tmp = arr($data);
+        return strtoupper(md5($seq . $tmp . $this->key));
     }
 
     /**
@@ -162,10 +91,11 @@ class austgoAPI
      */
     public function _request($data, $api)
     {
-        $url = self::BASE_API_URL . $this->apiMap($api);
+        $url = $this->base_url . $this->extend_url[$api];
         $post = $this->createJson($data);
         $res = $this->postCurl($url, $post);
-        return json_decode($res, true);
+        $res = json_decode($res, true);
+        return $res['data'];
     }
 
     // endregion
@@ -184,18 +114,29 @@ class austgoAPI
     /**
      * 获取商品列表
      * @param $start 起始ID 每次最多获取50个
+     * @param $limit 查询多少个 默认为100 必须是50的倍数
      * @return mixed
      */
-    public function goodsScan($start)
+    public function getGoods($start, $limit = 100)
     {
         $data = ['fromId' => $start];
-        return $this->_request($data, 'goods_scan');
+        $goods_data = [];
+        $count = 50;
+        $sum = 0;
+        while ($count == 50 && $sum < $limit) {
+            $result = $this->_request($data, 'goods_scan');
+            $goods_data = array_merge($goods_data, $result);
+            $count = count($result);
+            $start = $start + 50;
+            $sum = count($goods_data);
+        }
+        return $goods_data;
     }
 
     /**
      * 获取商品详情
      * @param array $ids 如果是查询单个商品 直接传int数字就可以了
-     * @param bool|false $includeContent
+     * @param bool|false $includeContent 是否需要详情
      * @return mixed
      */
     public function goods($ids, $includeContent = false)
@@ -217,12 +158,12 @@ class austgoAPI
      */
     public function sku($ids)
     {
-        if(!is_array($ids)){
+        if (!is_array($ids)) {
             $data['ids'] = [$ids];
-        }else{
+        } else {
             $data['ids'] = $ids;
         }
-        return $this->_request($data,'sku');
+        return $this->_request($data, 'sku');
     }
 
     /**
@@ -231,8 +172,59 @@ class austgoAPI
      */
     public function skuStatus()
     {
-        return $this->_request('','sku_status');
+        return $this->_request('', 'sku_status');
     }
 
+    /**
+     * 添加购物车
+     * @param $data
+     * @return mixed
+     */
+    public function addCart($data)
+    {
+        return $this->_request($data,'cart');
+    }
+
+    /**
+     * 创建订单
+     * @param $data
+     * $data = [
+     *    'isPickup' => true, //是否字体
+     *    'currency' => 'RMB', //结算货币
+     *    'includeInsurance' => false, //是否购买保险 可以不传 默认为False
+     *    'items' => [
+     *        ['id' => 19876, 'qty' => 3], //skuID 规格ID/货号  ，qty购买数量
+     *        ['id' => 19877, 'qty' => 1],
+     *        ['id' => 12940, 'qty' => 1],
+     *        ['id' => 15, 'qty' => 10],
+     *    ],
+     *    'autoPay' => false, //是否使用自动支付 我们采用手动支付 传false
+     *    'billName' => 'Joe', //收件人名称
+     *    'billPhone' => '18629001764', //收件人电话
+     *    'billAddress' => '西安市 大寨路', //收件人地址
+     *    'idNumber' => '430726198509200012', //收件人身份证号 非必选项
+     *    'senderName' => 'jelly', //发件人姓名 非必选项 不传发件人为澳购
+     *    'senderPhone' => '15829372775', //发件人电话 非必选项 不传电话为澳购电话
+     *    'remark' => '挑个好一点的', //订单备注 仓库打单人会看到
+     *    'orderId' => '93142905' //我们平台的订单ID
+     * ];
+     * @return mixed
+     */
+    public function createOrder($data)
+    {
+        return $this->_request($data,'order');
+    }
+
+    /**
+     * 查看订单详情
+     * @param $data string '70000692926'
+     * @return mixed
+     */
+    public function getOrder($data)
+    {
+        return $this->_request($data,'get_order');
+    }
     // endregion
+
+
 }
