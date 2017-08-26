@@ -29,6 +29,7 @@ class austgoAPI extends wareHouseAPI
             'request' => $data,
             'sign' => $sign
         ];
+
         $json = json_encode($json);
         return $json;
     }
